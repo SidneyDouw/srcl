@@ -1,0 +1,34 @@
+{
+  "name": "srcl",
+  "version": "1.0.0",
+  "description": "small and simple react component library",
+  "main": "index.js",
+  "scripts": {
+    "dev": "snowpack dev",
+    "test": "echo \"no test specified\"",
+    "generate": "fs.readdir('./src/patterns', (err, files) => fs.writeFileSync('./dist/components.txt', files.join('\n')))",
+    "build": "tsc -p ./tsconfig.patterns.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SidneyDouw/srcl.git"
+  },
+  "author": "Sidney Douw",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SidneyDouw/srcl/issues"
+  },
+  "homepage": "https://github.com/SidneyDouw/srcl#readme",
+  "devDependencies": {
+    "@types/react": "^17.0.27",
+    "@types/react-dom": "^17.0.9",
+    "less": "^4.1.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "snowpack": "^3.8.8",
+    "snowpack-plugin-less": "^1.0.7",
+    "typescript": "^4.4.3",
+    "webpack": "^5.58.1",
+    "webpack-cli": "^4.9.0"
+  }
+}
