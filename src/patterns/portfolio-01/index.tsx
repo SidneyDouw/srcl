@@ -1,8 +1,8 @@
 import React from 'react'
 
-type Props = Partial<{
+type Props = {
     flipped: boolean
-}>
+}
 
 const defaultProps: Props = {
     flipped: false,

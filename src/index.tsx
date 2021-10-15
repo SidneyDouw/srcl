@@ -2,28 +2,32 @@
 
 import { render } from 'react-dom'
 import React from 'react'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import './styles.less'
 
-import Hero01 from './patterns/hero-01'
-import Feature01 from './patterns/feature-01'
-import Portfolio01 from './patterns/portfolio-01'
+import Dev from './pages/dev'
+import Home from './pages/home'
+import Screenshot from './pages/screenshot'
 
 const App = () => {
     return (
         <>
-            <Hero01 />
-            <Hero01
-                mediaSource="https://www.monzoom.com/static2/preview/stock-video-free-romantic-video-background-loop-0242-28603.mp4"
-                isVideo
-                buttonStyle="inverted"
-            />
+            <Router>
+                <Switch>
+                    <Route path="/screenshot">
+                        <Screenshot />
+                    </Route>
 
-            <Feature01 />
-            <Feature01 flipped />
+                    <Route path="/dev">
+                        <Dev />
+                    </Route>
 
-            <Portfolio01 />
-            <Portfolio01 flipped />
+                    <Route path="/">
+                        <Home />
+                    </Route>
+                </Switch>
+            </Router>
         </>
     )
 }

@@ -1,10 +1,10 @@
 import React from 'react'
 
-type Props = Partial<{
+type Props = {
     mediaSource: string
     buttonStyle: 'default' | 'inverted'
     flipped: boolean
-}>
+}
 
 const defaultProps: Props = {
     mediaSource: 'https://websitedemos.net/wp-content/uploads/2020/01/hero8-bg.jpg',

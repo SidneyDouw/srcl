@@ -6,6 +6,7 @@ module.exports = {
     mount: {
         './src': '/',
     },
+    routes: [{ match: 'routes', src: '.*', dest: '/index.html' }],
     plugins: ['snowpack-plugin-less'],
     packageOptions: {
         /* ... */
