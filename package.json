@@ -4,6 +4,7 @@
   "description": "small and simple react component library",
   "main": "index.js",
   "scripts": {
+    "postinstall": "cd node_modules/taiko && node updateChromium.js",
     "dev": "snowpack dev",
     "test": "echo \"no test specified\"",
     "newPattern": "ts-node ./bin/newPattern/index.ts",
@@ -27,10 +28,6 @@
     "@types/react": "^17.0.27",
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.3.1",
-    "less": "^4.1.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-router-dom": "^5.3.0",
     "snowpack": "^3.8.8",
     "snowpack-plugin-less": "^1.0.7",
     "taiko": "^1.2.7",
@@ -38,6 +35,9 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
-    "prismjs": "^1.25.0"
+    "prismjs": "^1.25.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.3.0"
   }
 }
