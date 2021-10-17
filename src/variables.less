@@ -1,0 +1,25 @@
+@maxWidth: 1200px;
+@padding: 100px;
+
+.padding() {
+    padding: @padding;
+
+    @media screen and (max-width: 1024px) {
+        padding: @padding / 2;
+    }
+}
+
+.full-width-minus-padding() {
+    width: calc((100vw - @padding*2));
+    height: calc($width / 2);
+
+    @media screen and (max-width: 1024px) {
+        width: calc((100vw - @padding));
+        height: calc($width / 2);
+    }
+
+    @media screen and (max-width: 768px) {
+        width: calc((100vw - @padding));
+        height: calc($width * 2);
+    }
+}

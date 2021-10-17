@@ -1,0 +1,46 @@
+.feature-01 {
+    & > div {
+        display: grid;
+        grid-template-columns: 40% 60%;
+
+        @media screen and (max-width: 768px) {
+            grid-template-columns: 100%;
+        }
+
+        &.flipped {
+            grid-template-columns: 60% 40%;
+
+            @media screen and (max-width: 768px) {
+                grid-template-columns: 100%;
+            }
+
+            div {
+                grid-column: 1;
+                grid-row: 1;
+
+                @media screen and (max-width: 768px) {
+                    grid-column: unset;
+                    grid-row: unset;
+                }
+            }
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        button {
+            margin-bottom: 0;
+        }
+
+        div {
+            .padding();
+        }
+
+        .media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+}

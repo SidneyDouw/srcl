@@ -4,7 +4,7 @@ import { render } from 'react-dom'
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import './styles.less'
+import './index.less'
 
 import Dev from './pages/dev'
 import Home from './pages/home'

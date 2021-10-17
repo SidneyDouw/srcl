@@ -1,0 +1,27 @@
+@header01_height: 100px;
+@header01_padding: 20px;
+
+.header-01 {
+    background-color: #ddd;
+
+    & > div {
+        display: grid;
+        grid-template-columns: auto auto;
+        margin: 0 auto;
+        max-width: @maxWidth;
+        height: @header01_height;
+        justify-content: space-between;
+        align-items: center;
+
+        img {
+            height: calc(@header01_height - @header01_padding*2);
+            padding: @header01_padding;
+        }
+
+        nav {
+            span {
+                margin: 0 @header01_padding;
+            }
+        }
+    }
+}
