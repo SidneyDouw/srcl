@@ -38,7 +38,7 @@ fs.mkdirSync(pathToPatternDir)
     })
 })
 
-fs.appendFile(pathToStyles, `@import './patterns/${patternName}/style.less';`, (err) => {
+fs.appendFile(pathToStyles, `@import './patterns/${patternName}/style.less';\n`, (err) => {
     if (err) {
         console.error(err)
         process.exit(1)
