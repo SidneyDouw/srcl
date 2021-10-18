@@ -10,7 +10,7 @@ module.exports = function (snowpackConfig, pluginOptions) {
             output: ['.css', '.less'],
         },
 
-        async load({ filePath }) {
+        async load({ filePath, fileExt, isDev, isHmrEnabled, isSSR, isPackage }) {
             const contents = (await fs.promises.readFile(filePath, 'utf-8')).toString()
 
             let result = { '.css': { code: '' }, '.less': { code: '' } }
@@ -32,8 +32,20 @@ module.exports = function (snowpackConfig, pluginOptions) {
             return result
         },
 
-        async transform({ id, contents, isDev, fileExt }) {
-            console.log(id)
+        async transform({ id, srcPath, fileExt, contents, isDev, isHmrEnabled, isSSR, isPackage }) {
+            if (fileExt === '.css' || fileExt === '.less') {
+                if (contents !== '') {
+                    return contents !== '' ? `/* Modified */\n\n ${contents}` : ''
+                }
+            }
+        },
+
+        async run({ isDev }) {
+            console.log('run command', isDev)
+        },
+
+        async optimize({ buildDirectory }) {
+            console.log('optimize', buildDirectory)
         },
     }
 }
