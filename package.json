@@ -11,7 +11,7 @@
     "patternlist": "ts-node ./bin/generatePatternlist.ts",
     "screenshots": "npm run build:bin:shared && npm run patternlist && (npm run dev -- --open false & PID=$! && taiko ./bin/screenshots/run.js; kill $PID)",
     "build:bin:shared": "tsc ./bin/shared/index.ts --esModuleInterop true",
-    "build": "rm -rf ./dist && mkdir -p ./dist/patterns && cp -r ./src/patterns ./dist && tsc -p ./tsconfig.patterns.jsx.json && tsc -p ./tsconfig.patterns.es5.json"
+    "build": "rm -rf ./dist && snowpack build && cp -r ./src/patterns ./dist && tsc -p ./tsconfig.patterns.jsx.json && tsc -p ./tsconfig.patterns.es5.json"
   },
   "repository": {
     "type": "git",

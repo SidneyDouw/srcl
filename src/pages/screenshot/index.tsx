@@ -1,8 +1,6 @@
-import React, { lazy, useEffect, useState } from 'react'
+import React, { lazy } from 'react'
 import { useParams, useRouteMatch } from 'react-router'
 import { Switch, Route } from 'react-router-dom'
-
-import patternlist from '../../patternlist.json'
 
 export default () => {
     let { path, url } = useRouteMatch()
