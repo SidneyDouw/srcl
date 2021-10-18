@@ -4,6 +4,7 @@
   "description": "small and simple react component library",
   "main": "index.js",
   "scripts": {
+    "preinstall": "npm i -D ./custom-snowpack-plugin/less ./custom-snowpack-plugin/tsx",
     "postinstall": "cd node_modules/taiko && node updateChromium.js",
     "dev": "snowpack dev",
     "test": "echo \"no test specified\"",
@@ -11,7 +12,7 @@
     "patternlist": "ts-node ./bin/generatePatternlist.ts",
     "screenshots": "npm run build:bin:shared && npm run patternlist && (npm run dev -- --open false & PID=$! && taiko ./bin/screenshots/run.js; kill $PID)",
     "build:bin:shared": "tsc ./bin/shared/index.ts --esModuleInterop true",
-    "build": "rm -rf ./dist && snowpack build && cp -r ./src/patterns ./dist && tsc -p ./tsconfig.patterns.jsx.json && tsc -p ./tsconfig.patterns.es5.json"
+    "build": "snowpack build"
   },
   "repository": {
     "type": "git",
@@ -24,12 +25,14 @@
   },
   "homepage": "https://github.com/SidneyDouw/srcl#readme",
   "devDependencies": {
+    "@custom-snowpack-plugin/less": "file:custom-snowpack-plugin/less",
+    "@custom-snowpack-plugin/tsx": "file:custom-snowpack-plugin/tsx",
     "@types/prismjs": "^1.16.6",
     "@types/react": "^17.0.27",
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.3.1",
+    "less": "^4.1.2",
     "snowpack": "^3.8.8",
-    "snowpack-plugin-less": "^1.0.7",
     "taiko": "^1.2.7",
     "ts-node": "^10.3.0",
     "typescript": "^4.4.3"

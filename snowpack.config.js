@@ -7,7 +7,10 @@ module.exports = {
         './src': '/',
     },
     routes: [{ match: 'routes', src: '.*', dest: '/index.html' }],
-    plugins: ['snowpack-plugin-less'],
+    plugins: [
+        ['@custom-snowpack-plugin/less'],
+        // ['@custom-snowpack-plugin/tsx']
+    ],
     packageOptions: {
         /* ... */
     },
