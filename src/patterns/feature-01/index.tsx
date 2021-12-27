@@ -1,15 +1,18 @@
 import React from 'react'
+import './styles.less'
 
-type Props = {
+interface Props {
+    //* label=Media Source
+    //* default=https://websitedemos.net/wp-content/uploads/2020/01/hero8-bg.jpg
     mediaSource: string
-    buttonStyle: 'default' | 'inverted'
-    flipped: boolean
-}
 
-const defaultProps: Props = {
-    mediaSource: 'https://websitedemos.net/wp-content/uploads/2020/01/hero8-bg.jpg',
-    buttonStyle: 'default',
-    flipped: false,
+    //* label=Button Style
+    //* default=default
+    buttonStyle: 'default' | 'inverted'
+
+    //* label=Flipped
+    //* default=false
+    flipped: boolean
 }
 
 const Component = (props: Props) => {
@@ -31,5 +34,4 @@ const Component = (props: Props) => {
     )
 }
 
-Component.defaultProps = defaultProps
 export default Component

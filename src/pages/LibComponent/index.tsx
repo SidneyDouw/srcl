@@ -22,7 +22,7 @@ export default () => {
 const Component = () => {
     const { id } = useParams<{ id: string }>()
 
-    const Pattern = lazy(() => import(`../../patterns/${id}/index.js`))
+    const Pattern = lazy(() => import(`../../patterns/${id}/index.tsx`))
 
     return (
         <>

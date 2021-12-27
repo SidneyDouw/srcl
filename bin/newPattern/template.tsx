@@ -1,8 +1,6 @@
 import React from 'react'
 
-type Props = {}
-
-const defaultProps: Props = {}
+interface Props {}
 
 const Component = (props: Props) => {
     return (
@@ -12,5 +10,4 @@ const Component = (props: Props) => {
     )
 }
 
-Component.defaultProps = defaultProps
 export default Component

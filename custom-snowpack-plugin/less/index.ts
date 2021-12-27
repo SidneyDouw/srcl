@@ -54,33 +54,35 @@ const pluginFactory: SnowpackPluginFactory<PluginOptions> = () => {
             }
 
             // Emit Css
-            try {
-                const output = await emitCss(contents, filePath)
-                result['.css'].code = output.css
+            if (filePath.endsWith('src/index.less') || filePath.includes('/patterns/')) {
+                try {
+                    const output = await emitCss(contents, filePath)
+                    result['.css'].code = output.css
 
-                if (isDev) {
-                    output.imports.forEach((importedFile) => {
-                        addImportsToMap(filePath, importedFile)
-                    })
+                    if (isDev) {
+                        output.imports.forEach((importedFile) => {
+                            addImportsToMap(filePath, importedFile)
+                        })
+                    }
+                } catch (error) {
+                    throw new Error(`Error emitting CSS:\n${error}`)
                 }
-            } catch (error) {
-                throw new Error(`Error emitting CSS:\n${error}`)
             }
 
             return result
         },
 
         async transform({ fileExt, contents }) {
-            if (this.resolve?.output.includes(fileExt)) {
+            if (this.resolve!.output.includes(fileExt)) {
                 if (contents !== '') {
-                    return contents !== '' ? `/* Modified */\n\n ${contents}` : ''
+                    return contents !== '' ? `/* Modified */\n\n${contents}` : ''
                 }
             }
         },
 
-        async run({ isDev }) {
-            console.log('run command', isDev)
-        },
+        // async run({ isDev }) {
+        //     console.log('run command', isDev)
+        // },
 
         async optimize({ buildDirectory }) {
             const files = getAllFiles(path.join(buildDirectory, 'patterns')).filter((file) =>

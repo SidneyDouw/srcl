@@ -91,6 +91,7 @@ var pluginFactory = function () {
                                     throw new Error("Error emitting LESS:\n" + error);
                                 }
                             }
+                            if (!(filePath.endsWith('src/index.less') || filePath.includes('/patterns/'))) return [3 /*break*/, 5];
                             _b.label = 2;
                         case 2:
                             _b.trys.push([2, 4, , 5]);
@@ -119,22 +120,16 @@ var pluginFactory = function () {
                 return __generator(this, function (_c) {
                     if ((_b = this.resolve) === null || _b === void 0 ? void 0 : _b.output.includes(fileExt)) {
                         if (contents !== '') {
-                            return [2 /*return*/, contents !== '' ? "/* Modified */\n\n " + contents : ''];
+                            return [2 /*return*/, contents !== '' ? "/* Modified */\n\n" + contents : ''];
                         }
                     }
                     return [2 /*return*/];
                 });
             });
         },
-        run: function (_a) {
-            var isDev = _a.isDev;
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_b) {
-                    console.log('run command', isDev);
-                    return [2 /*return*/];
-                });
-            });
-        },
+        // async run({ isDev }) {
+        //     console.log('run command', isDev)
+        // },
         optimize: function (_a) {
             var buildDirectory = _a.buildDirectory;
             return __awaiter(this, void 0, void 0, function () {

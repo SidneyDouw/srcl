@@ -6,9 +6,8 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import './index.less'
 
-import Dev from './pages/dev'
-import Home from './pages/home'
-import Screenshot from './pages/screenshot'
+import Home from './pages/Home'
+import LibComponent from './pages/LibComponent'
 
 const App = () => {
     return (
@@ -16,11 +15,7 @@ const App = () => {
             <Router>
                 <Switch>
                     <Route path="/screenshot">
-                        <Screenshot />
-                    </Route>
-
-                    <Route path="/dev">
-                        <Dev />
+                        <LibComponent />
                     </Route>
 
                     <Route path="/">
