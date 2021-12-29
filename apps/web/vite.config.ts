@@ -1,11 +1,12 @@
+import directiveParser from 'vite-plugin-srcl-directive-parser'
 import { defineConfig, Plugin } from 'vite'
 import { PluginContext } from 'rollup'
 import { readFileSync } from 'fs'
-import less from 'less'
+import { render } from 'less'
 
 export default defineConfig({
     root: './src',
-    plugins: [patternCode()],
+    plugins: [patternCode(), directiveParser()],
     server: {
         port: 8080,
     },
@@ -82,7 +83,7 @@ const emitCssFromLess = async (
     fileName: string,
     fileType: string,
 ) => {
-    const code = await less.render(input, {
+    const code = await render(input, {
         filename: `${basePath}/${patternName}/${fileName}.${fileType}`,
     })
 

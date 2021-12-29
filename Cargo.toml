@@ -1,0 +1,2 @@
+[workspace]
+members = ["packages/srcl-directive-parser"]

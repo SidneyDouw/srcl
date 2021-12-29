@@ -1,0 +1,43 @@
+{
+    "name": "srcl",
+    "version": "1.0.0",
+    "description": "small and simple react component library",
+    "main": "index.js",
+    "scripts": {
+        "dev": "vite",
+        "test": "echo \"No test specified\"",
+        "build": "vite build",
+        "newPattern": "ts-node ./bin/newPattern/index.ts",
+        "patternlist": "ts-node ./bin/generatePatternlist.ts",
+        "screenshots": "npm run build:bin:shared && npm run patternlist && (npm run dev -- --open false & PID=$! && taiko ./bin/screenshots/run.js; kill $PID)",
+        "build:bin:shared": "tsc ./bin/shared/index.ts --esModuleInterop true"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/SidneyDouw/srcl.git"
+    },
+    "author": "Sidney Douw",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/SidneyDouw/srcl/issues"
+    },
+    "homepage": "https://github.com/SidneyDouw/srcl#readme",
+    "devDependencies": {
+        "@types/less": "^3.0.3",
+        "@types/prismjs": "^1.16.6",
+        "@types/react": "^17.0.27",
+        "@types/react-dom": "^17.0.9",
+        "@types/react-router-dom": "^5.3.1",
+        "less": "^4.1.2",
+        "taiko": "^1.2.7",
+        "ts-node": "^10.3.0",
+        "typescript": "^4.4.3",
+        "vite": "^2.7.7"
+    },
+    "dependencies": {
+        "prismjs": "^1.25.0",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-router-dom": "^5"
+    }
+}
