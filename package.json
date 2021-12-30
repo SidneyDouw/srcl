@@ -5,7 +5,9 @@
         "apps/*",
         "packages/*"
     ],
-    "scripts": {},
+    "scripts": {
+        "build": "npm run build --workspace=packages && npm run build --workspace=apps/web"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/SidneyDouw/srcl.git"
