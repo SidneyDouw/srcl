@@ -8,7 +8,11 @@ fn main() -> Result<(), String> {
         .get(1)
         .ok_or_else(|| "Please specify a filepath as the first parameter".to_owned())?;
 
-    let output = transform_file(filepath);
+    let code = std::fs::read_to_string(filepath)
+        .map_err(|e| format!("Error reading file at \"{}\"\n{}", filepath, e))
+        .unwrap();
+
+    let output = transform_file(&code).unwrap();
 
     println!("{}", output);
 

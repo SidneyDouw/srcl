@@ -8,23 +8,26 @@ use parser::Parser;
 use transformer::to_js_obj;
 use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen]
-pub fn transform_file(filepath: &str) -> String {
-    let input = std::fs::read_to_string(filepath)
-        .map_err(|e| format!("Error reading file at \"{}\"\n{}", filepath, e))
-        .unwrap();
+pub fn set_panic_hook() {
+    #[cfg(feature = "console_error_panic_hook")]
+    console_error_panic_hook::set_once();
+}
 
-    let mut parser = Parser::new(&input);
+#[wasm_bindgen]
+pub fn transform_file(code: &str) -> Result<String, JsValue> {
+    set_panic_hook();
+
+    let mut parser = Parser::new(code);
 
     // TODO: Add line and column to error messages, maybe even make it pretty
-    let interface = parser.parse().unwrap();
+    let interface = parser.parse()?;
 
     let s = to_js_obj(interface);
 
-    let output = input.replace(
+    let output = code.replace(
         "export default Component",
         format!("{}\n\nexport default Component", s).as_str(),
     );
 
-    output
+    Ok(output)
 }

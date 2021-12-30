@@ -2,16 +2,16 @@ import React from 'react'
 import './styles.less'
 
 interface Props {
-    //* label=Media Source
-    //* default=https://websitedemos.net/wp-content/uploads/2020/01/hero8-bg.jpg
+    //* label="Media Source"
+    //* default="https://websitedemos.net/wp-content/uploads/2020/01/hero8-bg.jpg"
     mediaSource: string
 
-    //* label=Button Style
-    //* default=default
-    buttonStyle: 'default' | 'inverted'
+    //* label="Button Style"
+    //* default="default"
+    buttonStyle: string // 'default' | 'inverted'
 
-    //* label=Flipped
-    //* default=false
+    //* label="Flipped"
+    //* default="false"
     flipped: boolean
 }
 

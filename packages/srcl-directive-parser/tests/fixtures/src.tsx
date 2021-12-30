@@ -1,12 +1,13 @@
 interface Props {
-  //* type=range min=0 max=99 step=1 default=0
-  //* label=Number
-  num: number;
+    //* type="range" min=0 max=99 step=1 default=0
+    //* label="Number"
+    num: number
 
-  //* type=text default=hello
-  string: string;
+    //* type="text"
+    //* default="https://websitedemos.net/wp-content/uploads/2020/01/hero8-bg.jpg"
+    string: string
 }
 
-const Component = (props: Props) => {};
+const Component = (props: Props) => {}
 
-export default Component;
+export default Component

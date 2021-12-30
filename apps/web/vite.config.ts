@@ -23,8 +23,6 @@ function patternCode(): Plugin {
 
         async load(id, options) {
             if (id.includes('src/patterns/')) {
-                // console.log('\nLOAD:', id)
-
                 let basePath = id.match(/(.*\/src\/patterns)/)![1]
                 let patternName = id.match(/src\/patterns\/(.*)\/.*/)![1]
                 let fileName = id.match(/src\/patterns\/.*\/(.*)\./)![1]

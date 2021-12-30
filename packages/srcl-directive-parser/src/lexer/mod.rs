@@ -3,16 +3,18 @@ pub mod types;
 use crate::lexer::types::{Scope, Token};
 
 #[derive(Debug, Clone)]
-enum LexerContext {
+pub enum LexerContext {
     Normal,
     Directive,
+    String,
 }
 
 #[derive(Debug)]
 pub struct Lexer<'a> {
     input: &'a str,
     position: usize,
-    context: LexerContext,
+    pub context: LexerContext,
+    pub last_context: LexerContext,
     col_range: (usize, usize),
     line_number: usize,
 }
@@ -24,30 +26,41 @@ impl Iterator for Lexer<'_> {
         self.col_range.0 = self.col_range.1;
 
         if let Some(c) = self.peek_char() {
-            let token = match c {
-                c if c.is_alphabetic() => self.identifier(),
-                c if c.is_digit(10) => self.number(),
-                '/' => self.slash(),
-                '=' => self.equals(),
-                ' ' => self.whitespace(),
-                '\n' => self.newline(),
-                '"' => self.consume(Token::QuotationMark(c)),
-                '\'' => self.consume(Token::QuotationMark(c)),
-                '{' => self.consume(Token::Brace(Scope::Begin)),
-                '}' => self.consume(Token::Brace(Scope::End)),
-                '[' => self.consume(Token::SquareBracket(Scope::Begin)),
-                ']' => self.consume(Token::SquareBracket(Scope::End)),
-                '<' => self.consume(Token::AngleBracket(Scope::Begin)),
-                '>' => self.consume(Token::AngleBracket(Scope::End)),
-                '(' => self.consume(Token::Parentheses(Scope::Begin)),
-                ')' => self.consume(Token::Parentheses(Scope::End)),
-                '|' => self.consume(Token::Pipe),
-                '.' => self.consume(Token::Dot),
-                ',' => self.consume(Token::Comma),
-                ':' => self.consume(Token::Colon),
-                ';' => self.consume(Token::Semicolon),
-                '?' => self.consume(Token::QuestionMark),
-                _ => panic!("Invalid Character found: \"{}\"", c),
+            let token = match self.context {
+                LexerContext::String => match c {
+                    '"' => self.quotation_mark(),
+                    '\'' => self.quotation_mark(),
+                    '\n' => self.newline(),
+                    _ => self.string(),
+                },
+
+                _ => match c {
+                    c if c.is_alphabetic() => self.identifier(),
+                    c if c.is_digit(10) => self.number(),
+                    '/' => self.slash(),
+                    '=' => self.equals(),
+                    ' ' => self.whitespace(),
+                    '"' => self.quotation_mark(),
+                    '\'' => self.quotation_mark(),
+                    '\n' => self.newline(),
+                    '\\' => self.consume(Token::Backslash),
+                    '-' => self.consume(Token::Dash),
+                    '{' => self.consume(Token::Brace(Scope::Begin)),
+                    '}' => self.consume(Token::Brace(Scope::End)),
+                    '[' => self.consume(Token::SquareBracket(Scope::Begin)),
+                    ']' => self.consume(Token::SquareBracket(Scope::End)),
+                    '<' => self.consume(Token::AngleBracket(Scope::Begin)),
+                    '>' => self.consume(Token::AngleBracket(Scope::End)),
+                    '(' => self.consume(Token::Parentheses(Scope::Begin)),
+                    ')' => self.consume(Token::Parentheses(Scope::End)),
+                    '|' => self.consume(Token::Pipe),
+                    '.' => self.consume(Token::Dot),
+                    ',' => self.consume(Token::Comma),
+                    ':' => self.consume(Token::Colon),
+                    ';' => self.consume(Token::Semicolon),
+                    '?' => self.consume(Token::QuestionMark),
+                    _ => panic!("Invalid Character found: \"{}\"", c),
+                },
             };
 
             if matches!(
@@ -70,6 +83,7 @@ impl Lexer<'_> {
             input,
             position: 0,
             context: LexerContext::Normal,
+            last_context: LexerContext::Normal,
             line_number: 1,
             col_range: (1, 1),
         }
@@ -170,6 +184,20 @@ impl Lexer<'_> {
         Token::Number(number)
     }
 
+    fn string(&mut self) -> Token {
+        let mut string = String::new();
+
+        while let Some(c) = self.peek_char() {
+            if c != '"' && c != '\'' {
+                string.push(self.peek_char_and_advance().unwrap());
+            } else {
+                break;
+            }
+        }
+
+        Token::String(string)
+    }
+
     fn slash(&mut self) -> Token {
         // let c0 = '/';
         let c1 = self.peek_nth_char(1).expect("Unexpected End");
@@ -191,6 +219,12 @@ impl Lexer<'_> {
                 // panic!("Invalid character after first slash: {}", c)
             }
         }
+    }
+
+    fn quotation_mark(&mut self) -> Token {
+        let c = self.peek_char_and_advance().unwrap();
+
+        Token::QuotationMark(c)
     }
 
     fn comment(&mut self) -> Token {

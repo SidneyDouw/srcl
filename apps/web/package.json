@@ -1,5 +1,5 @@
 {
-    "name": "srcl",
+    "name": "srcl-web",
     "version": "1.0.0",
     "description": "small and simple react component library",
     "main": "index.js",

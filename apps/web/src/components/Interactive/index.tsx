@@ -35,7 +35,34 @@ export default ({ child }: Props) => {
 
     const { properties } = makeEasyUiData(c.uiData)
     const [state, setState] = useState(makeInitialState(properties))
-    const inputs = makeInputs(properties)
+
+    const inputs = Object.keys(properties).map((key, i) => {
+        const { directives } = properties[key]
+
+        let input = (
+            <input
+                type={directives['type']}
+                min={directives['min']}
+                max={directives['max']}
+                step={directives['step']}
+                value={state[key]}
+                onChange={(e) => setState({ ...state, [key]: e.target.value })}
+            />
+        )
+
+        return (
+            <React.Fragment key={i}>
+                {directives['label'] ? (
+                    <label>
+                        {directives['label']}
+                        {input}
+                    </label>
+                ) : (
+                    input
+                )}
+            </React.Fragment>
+        )
+    })
 
     return (
         <>
@@ -82,34 +109,4 @@ const makeInitialState = (properties: EasyUiData['properties']) => {
 
         return prev
     }, {} as { [key: string]: any })
-}
-
-const makeInputs = (properties: EasyUiData['properties']) => {
-    return Object.keys(properties).map((key, i) => {
-        const { directives } = properties[key]
-
-        let input = (
-            <input
-                type={directives['type']}
-                min={directives['min']}
-                max={directives['max']}
-                step={directives['step']}
-                value={state[key]}
-                onChange={(e) => setState({ ...state, [key]: e.target.value })}
-            />
-        )
-
-        return (
-            <React.Fragment key={i}>
-                {directives['label'] ? (
-                    <label>
-                        {directives['label']}
-                        {input}
-                    </label>
-                ) : (
-                    input
-                )}
-            </React.Fragment>
-        )
-    })
 }

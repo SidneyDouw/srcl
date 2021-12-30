@@ -1,7 +1,7 @@
 pub mod types;
 
 use crate::lexer::types::{Scope, Token};
-use crate::lexer::Lexer;
+use crate::lexer::{Lexer, LexerContext};
 
 use self::types::{Directive, EnumProperty, Interface, InterfaceProperty};
 
@@ -205,7 +205,7 @@ impl Parser<'_> {
                     Token::Identifier(_) => {
                         let key = self.identifier()?.inner();
                         self.equals()?;
-                        let value = self.identifier_or_number()?;
+                        let value = self.string_or_number()?;
 
                         directives.push(Directive::new(key, value.into()));
                     }
@@ -242,10 +242,34 @@ impl Parser<'_> {
             match token {
                 Token::Identifier(_) => self.identifier(),
                 Token::Number(_) => self.number(),
-                _ => Err("Expected Identifier or Number".into()),
+                _ => Err(format!(
+                    "Expected Identifier or Number at {:?}",
+                    self.lexer.get_position()
+                )),
             }
         } else {
-            Err("Expected Identifier or Number".into())
+            Err(format!(
+                "Expected Identifier or Number at {:?}",
+                self.lexer.get_position()
+            ))
+        }
+    }
+
+    fn string_or_number(&mut self) -> Result<Token, String> {
+        if let Some(token) = self.lexer.peek() {
+            match token {
+                Token::QuotationMark(_) => self.string(),
+                Token::Number(_) => self.number(),
+                _ => Err(format!(
+                    "Expected String or Number at {:?}",
+                    self.lexer.get_position()
+                )),
+            }
+        } else {
+            Err(format!(
+                "String String or Number at {:?}",
+                self.lexer.get_position()
+            ))
         }
     }
 
@@ -268,7 +292,10 @@ impl Parser<'_> {
             self.lexer.next();
             Ok(s)
         } else {
-            Err("Expected Comment".into())
+            Err(format!(
+                "Expected Comment at {:?}",
+                self.lexer.get_position()
+            ))
         }
     }
 
@@ -277,7 +304,10 @@ impl Parser<'_> {
             self.lexer.next();
             Ok(Token::Identifier(s))
         } else {
-            Err("Expected Identifier".into())
+            Err(format!(
+                "Expected Identifier at {:?}",
+                self.lexer.get_position()
+            ))
         }
     }
 
@@ -286,7 +316,24 @@ impl Parser<'_> {
             self.lexer.next();
             Ok(Token::Number(s))
         } else {
-            Err("Expected Number".into())
+            Err(format!(
+                "Expected Number at {:?}",
+                self.lexer.get_position()
+            ))
+        }
+    }
+
+    fn string(&mut self) -> Result<Token, String> {
+        self.quotation_mark()?;
+        if let Some(Token::String(s)) = self.lexer.peek() {
+            self.lexer.next();
+            self.quotation_mark()?;
+            Ok(Token::String(s))
+        } else {
+            Err(format!(
+                "Expected String at {:?}",
+                self.lexer.get_position()
+            ))
         }
     }
 
@@ -296,19 +343,39 @@ impl Parser<'_> {
                 self.lexer.next();
                 Ok(())
             } else {
-                Err(format!("Expected {:?}", scope))
+                Err(format!(
+                    "Expected {:?} at {:?}",
+                    scope,
+                    self.lexer.get_position()
+                ))
             }
         } else {
-            Err("Expected Brace".into())
+            Err(format!("Expected Brace at {:?}", self.lexer.get_position()))
         }
     }
 
-    fn quotation_mark(&mut self) -> Result<(), String> {
-        if let Some(Token::QuotationMark(_)) = self.lexer.peek() {
+    fn quotation_mark(&mut self) -> Result<Token, String> {
+        if let Some(Token::QuotationMark(q)) = self.lexer.peek() {
             self.lexer.next();
-            Ok(())
+
+            match self.lexer.context {
+                LexerContext::String => {
+                    self.lexer.context = self.lexer.last_context.clone();
+                    self.lexer.last_context = LexerContext::String;
+                }
+                _ => {
+                    let temp_context = self.lexer.context.clone();
+                    self.lexer.context = LexerContext::String;
+                    self.lexer.last_context = temp_context;
+                }
+            }
+
+            Ok(Token::QuotationMark(q))
         } else {
-            Err("Expected Quotation Mark".into())
+            Err(format!(
+                "Expected Quotation Mark at {:?}",
+                self.lexer.get_position()
+            ))
         }
     }
 
@@ -317,7 +384,7 @@ impl Parser<'_> {
             self.lexer.next();
             Ok(())
         } else {
-            Err("Expected Colon".into())
+            Err(format!("Expected Colon at {:?}", self.lexer.get_position()))
         }
     }
 
@@ -326,7 +393,10 @@ impl Parser<'_> {
             self.lexer.next();
             Ok(())
         } else {
-            Err("Expected Equals".into())
+            Err(format!(
+                "Expected Equals at {:?}",
+                self.lexer.get_position()
+            ))
         }
     }
 }

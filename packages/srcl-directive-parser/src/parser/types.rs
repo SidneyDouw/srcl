@@ -100,6 +100,7 @@ impl From<Token> for DirectiveValue {
     fn from(t: Token) -> Self {
         match t {
             Token::Identifier(s) => DirectiveValue::String(s),
+            Token::String(s) => DirectiveValue::String(s),
             Token::Number(n) => DirectiveValue::Number(n),
             t => panic!("Token {:?} cannot be converted into DirectiveValue", t),
         }
@@ -110,6 +111,7 @@ impl From<Token> for PropertyValue {
     fn from(t: Token) -> Self {
         match t {
             Token::Identifier(s) => PropertyValue::String(s),
+            Token::String(s) => PropertyValue::String(s),
             Token::Number(n) => PropertyValue::Number(n),
             t => panic!("Token {:?} cannot be converted into DirectiveValue", t),
         }
@@ -120,6 +122,7 @@ impl From<Token> for EnumValue {
     fn from(t: Token) -> Self {
         match t {
             Token::Identifier(s) => EnumValue::String(s),
+            Token::String(s) => EnumValue::String(s),
             Token::Number(n) => EnumValue::Number(n),
             t => panic!("Token {:?} cannot be converted into DirectiveValue", t),
         }
