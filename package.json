@@ -6,7 +6,8 @@
         "packages/*"
     ],
     "scripts": {
-        "build": "npm run build --workspace=packages && npm run build --workspace=apps/web"
+        "build": "npm run build --workspace=packages && npm run build --workspace=apps/web",
+        "preview": "npm run preview --workspace=apps/web"
     },
     "repository": {
         "type": "git",

@@ -7,6 +7,7 @@
         "dev": "vite",
         "test": "echo \"No test specified\"",
         "build": "vite build",
+        "preview": "vite preview --port=8080",
         "newPattern": "ts-node ./bin/newPattern/index.ts",
         "patternlist": "ts-node ./bin/generatePatternlist.ts",
         "screenshots": "npm run build:bin:shared && npm run patternlist && (npm run dev -- --open false & PID=$! && taiko ./bin/screenshots/run.js; kill $PID)",

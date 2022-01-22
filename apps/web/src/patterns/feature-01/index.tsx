@@ -8,9 +8,9 @@ interface Props {
 
     //* label="Button Style"
     //* default="default"
-    buttonStyle: string // 'default' | 'inverted'
+    buttonStyle: string // 'default' | 'inverted' TODO: Parser can't handle these types yet
 
-    //* label="Flipped"
+    //* label="Flipped" type="checkbox"
     //* default="false"
     flipped: boolean
 }

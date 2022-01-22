@@ -1,12 +1,12 @@
 import directiveParser from 'vite-plugin-srcl-directive-parser'
 import { defineConfig, Plugin } from 'vite'
-import { PluginContext } from 'rollup'
 import { readFileSync } from 'fs'
 import { render } from 'less'
+import { ResolvedConfig } from 'vite'
 
 export default defineConfig({
     root: './src',
-    plugins: [patternCode(), directiveParser()],
+    plugins: [generatePatternOutput(), directiveParser()],
     server: {
         port: 8080,
     },
@@ -16,10 +16,26 @@ export default defineConfig({
     },
 })
 
-function patternCode(): Plugin {
+type GeneratePatternOutputOptions = {
+    outputFolderName: string
+}
+
+function generatePatternOutput(options?: GeneratePatternOutputOptions): Plugin {
+    let config: ResolvedConfig
+    const outputFiles: { [key: string]: string } = {}
+
+    let pluginOptions = options
+        ? options
+        : {
+              outputFolderName: 'patternOutput',
+          }
+
     return {
-        name: 'pattern-code',
-        apply: 'build',
+        name: 'generate-pattern-output',
+
+        async configResolved(resolvedConfig) {
+            config = resolvedConfig
+        },
 
         async load(id, options) {
             if (id.includes('src/patterns/')) {
@@ -35,17 +51,59 @@ function patternCode(): Plugin {
 
                 switch (fileType) {
                     case 'tsx':
-                        emitInput(this, code, patternName, fileName, fileType)
+                        if (config.command === 'build') {
+                            this.emitFile({
+                                type: 'asset',
+                                name: patternName,
+                                fileName: `${pluginOptions.outputFolderName}/${patternName}/${fileName}.${fileType}`,
+                                source: code,
+                            })
+                        } else {
+                            outputFiles[`${patternName}/${fileName}.${fileType}`] = code
+                        }
+
                         break
 
                     case 'less':
-                        emitInput(this, code, patternName, fileName, fileType)
-                        await emitCssFromLess(this, code, basePath, patternName, fileName, fileType)
+                        const css = await cssFromLess(
+                            code,
+                            basePath,
+                            patternName,
+                            fileName,
+                            fileType,
+                        )
+
+                        if (config.command === 'build') {
+                            this.emitFile({
+                                type: 'asset',
+                                name: patternName,
+                                fileName: `${pluginOptions.outputFolderName}/${patternName}/${fileName}.${fileType}`,
+                                source: code,
+                            })
+                            this.emitFile({
+                                type: 'asset',
+                                name: patternName,
+                                fileName: `${pluginOptions.outputFolderName}/${patternName}/${fileName}.css`,
+                                source: css,
+                            })
+                        } else {
+                            outputFiles[`${patternName}/${fileName}.${fileType}`] = code
+                            outputFiles[`${patternName}/${fileName}.css`] = css
+                        }
 
                         break
 
                     case 'css':
-                        emitInput(this, code, patternName, fileName, fileType)
+                        if (config.command === 'build') {
+                            this.emitFile({
+                                type: 'asset',
+                                name: patternName,
+                                fileName: `${pluginOptions.outputFolderName}/${patternName}/${fileName}.${fileType}`,
+                                source: code,
+                            })
+                        } else {
+                            outputFiles[`${patternName}/${fileName}.${fileType}`] = code
+                        }
                         break
 
                     default:
@@ -55,26 +113,23 @@ function patternCode(): Plugin {
 
             return undefined
         },
+
+        configureServer(server) {
+            server.middlewares.use((req, res, next) => {
+                if (req.url?.startsWith(`/${pluginOptions.outputFolderName}/`)) {
+                    let id = req.url.replace(`/${pluginOptions.outputFolderName}/`, '')
+
+                    res.write(outputFiles[id])
+                    return res.end()
+                }
+
+                next()
+            })
+        },
     }
 }
 
-const emitInput = (
-    context: PluginContext,
-    input: string,
-    patternName: string,
-    fileName: string,
-    fileType: string,
-) => {
-    context.emitFile({
-        type: 'asset',
-        name: patternName,
-        fileName: `patterns/${patternName}/${fileName}.${fileType}`,
-        source: input,
-    })
-}
-
-const emitCssFromLess = async (
-    context: PluginContext,
+const cssFromLess = async (
     input: string,
     basePath: string,
     patternName: string,
@@ -84,11 +139,5 @@ const emitCssFromLess = async (
     const code = await render(input, {
         filename: `${basePath}/${patternName}/${fileName}.${fileType}`,
     })
-
-    context.emitFile({
-        type: 'asset',
-        name: patternName,
-        fileName: `patterns/${patternName}/${fileName}.css`,
-        source: code.css,
-    })
+    return code.css
 }
