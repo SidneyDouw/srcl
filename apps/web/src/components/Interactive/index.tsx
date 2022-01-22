@@ -1,4 +1,4 @@
-import React, { useState, createElement } from 'react'
+import React, { useState, createElement, useEffect } from 'react'
 
 interface UiData {
     name: string
@@ -39,26 +39,44 @@ export default ({ child }: Props) => {
     const inputs = Object.keys(properties).map((key, i) => {
         const { directives } = properties[key]
 
-        let input = (
-            <input
-                type={directives['type']}
-                min={directives['min']}
-                max={directives['max']}
-                step={directives['step']}
-                value={state[key]}
-                onChange={(e) => setState({ ...state, [key]: e.target.value })}
-            />
-        )
+        let inputEl: JSX.Element
+
+        switch (directives['type']) {
+            case 'checkbox':
+                inputEl = (
+                    <input
+                        type="checkbox"
+                        checked={state[key]}
+                        onChange={(e) => {
+                            setState({ ...state, [key]: e.target.checked })
+                        }}
+                    />
+                )
+
+                break
+
+            default:
+                inputEl = (
+                    <input
+                        type={directives['type']}
+                        min={directives['min']}
+                        max={directives['max']}
+                        step={directives['step']}
+                        value={state[key]}
+                        onChange={(e) => setState({ ...state, [key]: e.target.value })}
+                    />
+                )
+        }
 
         return (
             <React.Fragment key={i}>
                 {directives['label'] ? (
                     <label>
                         {directives['label']}
-                        {input}
+                        {inputEl}
                     </label>
                 ) : (
-                    input
+                    inputEl
                 )}
             </React.Fragment>
         )
@@ -105,7 +123,15 @@ const makeEasyUiData = (uiData: UiData): EasyUiData => {
 const makeInitialState = (properties: EasyUiData['properties']) => {
     return Object.keys(properties).reduce((prev, key) => {
         const { directives } = properties[key]
-        prev[key] = directives['default']
+
+        switch (directives['type']) {
+            case 'checkbox':
+                prev[key] = directives['default'] === 'true' ? true : false
+                break
+
+            default:
+                prev[key] = directives['default']
+        }
 
         return prev
     }, {} as { [key: string]: any })

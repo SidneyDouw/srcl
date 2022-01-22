@@ -8,9 +8,11 @@ interface Props {
 
     //* label="Button Style"
     //* default="default"
-    buttonStyle: string // 'default' | 'inverted' TODO: Parser can't handle these types yet
+    // TODO: Parser can't handle union(?) types yet
+    buttonStyle: string // 'default' | 'inverted'
 
     //* label="Flipped" type="checkbox"
+    // TODO: Is being parsed as a string, should maybe be parsed as a boolean
     //* default="false"
     flipped: boolean
 }
