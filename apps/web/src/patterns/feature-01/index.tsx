@@ -3,13 +3,13 @@ import './styles.less'
 
 interface Props {
     //* label="Media Source"
-    //* default="https://websitedemos.net/wp-content/uploads/2020/01/hero8-bg.jpg"
+    //* default="https://websitedemos.net/wp-content/uploads/2020/01/hero9-bg.jpg"
     mediaSource: string
 
-    //* label="Button Style"
-    //* default="default"
-    // TODO: Parser can't handle union(?) types yet
-    buttonStyle: string // 'default' | 'inverted'
+    //* label="Button Style" type="select"
+    //* default="inverted"
+    // TODO: Individual labels for the options
+    buttonStyle: 'default' | 'inverted'
 
     //* label="Flipped" type="checkbox"
     // TODO: Is being parsed as a string, should maybe be parsed as a boolean

@@ -5,7 +5,7 @@ interface Props {
 
     //* type="text"
     //* default="https://websitedemos.net/wp-content/uploads/2020/01/hero8-bg.jpg"
-    string: string
+    string: 'sometthing' | 'else' | string
 }
 
 const Component = (props: Props) => {}

@@ -55,6 +55,27 @@ export default ({ child }: Props) => {
 
                 break
 
+            case 'select':
+                let values: string[] = properties[key].value.split(' | ')
+                let options = values.map((value, i) => (
+                    <option key={i} value={value}>
+                        {value}
+                    </option>
+                ))
+
+                inputEl = (
+                    <select
+                        value={state[key]}
+                        onChange={(e) =>
+                            setState({ ...state, [key]: values[e.target.selectedIndex] })
+                        }
+                    >
+                        {options}
+                    </select>
+                )
+
+                break
+
             default:
                 inputEl = (
                     <input

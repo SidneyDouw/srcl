@@ -29,7 +29,13 @@ fn do_properties(properties: &[InterfaceProperty]) -> String {
 
     properties.iter().for_each(|p| {
         let v = match &p.value {
-            PropertyValue::String(s) => format!("\"{}\"", s),
+            PropertyValue::String(s) => {
+                if s.contains("\"") {
+                    format!("'{}'", s)
+                } else {
+                    format!("\"{}\"", s)
+                }
+            }
             PropertyValue::Number(n) => n.to_string(),
         };
 

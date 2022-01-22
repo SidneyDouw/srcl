@@ -104,13 +104,13 @@ impl Parser<'_> {
         Ok((key, value))
     }
 
-    fn parse_type(&mut self) -> Result<Vec<InterfaceProperty>, String> {
-        self.identifier()?;
-        let _type_name = self.identifier()?;
-        self.equals()?;
+    // fn parse_type(&mut self) -> Result<Vec<InterfaceProperty>, String> {
+    //     self.identifier()?;
+    //     let _type_name = self.identifier()?;
+    //     self.equals()?;
 
-        todo!();
-    }
+    //     todo!();
+    // }
 
     fn parse_interface(&mut self) -> Result<(String, Vec<InterfaceProperty>), String> {
         self.identifier()?;
@@ -155,13 +155,25 @@ impl Parser<'_> {
                     Token::Identifier(_) => {
                         let key = self.identifier()?.inner();
                         self.colon()?;
-                        let value = self.identifier()?;
+                        let value = self.identifier_or_string()?;
+
+                        let mut union: Vec<Token> = vec![value.clone()];
+
+                        while let Some(Token::Pipe) = self.lexer.peek() {
+                            self.pipe()?;
+                            let t = self.identifier_or_string()?;
+                            union.push(t);
+                        }
 
                         match last_token {
                             TokenFlag::Directive => {
                                 let last_entry = properties.last_mut().unwrap();
                                 last_entry.key = key;
-                                last_entry.value = value.into();
+                                if union.len() > 1 {
+                                    last_entry.value = union.into();
+                                } else {
+                                    last_entry.value = value.into();
+                                }
                             }
                             TokenFlag::Property => {
                                 properties.push(InterfaceProperty::new(
@@ -250,6 +262,24 @@ impl Parser<'_> {
         } else {
             Err(format!(
                 "Expected Identifier or Number at {:?}",
+                self.lexer.get_position()
+            ))
+        }
+    }
+
+    fn identifier_or_string(&mut self) -> Result<Token, String> {
+        if let Some(token) = self.lexer.peek() {
+            match token {
+                Token::Identifier(_) => self.identifier(),
+                Token::QuotationMark(_) => self.string(),
+                _ => Err(format!(
+                    "Expected Identifier or String at {:?}",
+                    self.lexer.get_position()
+                )),
+            }
+        } else {
+            Err(format!(
+                "Expected Identifier or String at {:?}",
                 self.lexer.get_position()
             ))
         }
@@ -397,6 +427,15 @@ impl Parser<'_> {
                 "Expected Equals at {:?}",
                 self.lexer.get_position()
             ))
+        }
+    }
+
+    fn pipe(&mut self) -> Result<(), String> {
+        if let Some(Token::Pipe) = self.lexer.peek() {
+            self.lexer.next();
+            Ok(())
+        } else {
+            Err(format!("Expected Pipe at {:?}", self.lexer.get_position()))
         }
     }
 }

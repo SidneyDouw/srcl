@@ -113,8 +113,28 @@ impl From<Token> for PropertyValue {
             Token::Identifier(s) => PropertyValue::String(s),
             Token::String(s) => PropertyValue::String(s),
             Token::Number(n) => PropertyValue::Number(n),
-            t => panic!("Token {:?} cannot be converted into DirectiveValue", t),
+            t => panic!("Token {:?} cannot be converted into PropertyValue", t),
         }
+    }
+}
+
+impl From<Vec<Token>> for PropertyValue {
+    fn from(v: Vec<Token>) -> Self {
+        let out = v
+            .into_iter()
+            .map(|t| match t {
+                Token::Identifier(s) => s,
+                Token::String(s) => s,
+                Token::Number(n) => n,
+                t => panic!(
+                    "Token {:?} in Union vector cannot be converted into PropertyValue",
+                    t
+                ),
+            })
+            .collect::<Vec<_>>()
+            .join(" | ");
+
+        PropertyValue::String(out)
     }
 }
 

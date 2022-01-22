@@ -16,7 +16,7 @@ fn can_parser_parse() {
     let mut parser = Parser::new(&input);
     let interface = parser.parse();
 
-    println!("{:?}", interface.expect("Could not parse"));
+    let _interface = interface.expect("Could not parse");
 }
 
 #[test]
@@ -28,11 +28,8 @@ fn can_transformer_transform() {
 
     let s = to_js_obj(interface);
 
-    println!(
-        "{}",
-        input.replace(
-            "export default Component",
-            format!("{}\n\nexport default Component", s).as_str()
-        )
+    let _output = input.replace(
+        "export default Component",
+        format!("{}\n\nexport default Component", s).as_str(),
     );
 }

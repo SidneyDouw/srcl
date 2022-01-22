@@ -5,6 +5,7 @@
     "main": "pkg/srcl_directive_parser.js",
     "scripts": {
         "test": "cargo test",
+        "test:verbose": "cargo test -- --nocapture",
         "build": "cargo build --release && wasm-pack build --target nodejs"
     },
     "keywords": [],
