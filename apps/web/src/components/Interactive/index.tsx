@@ -1,4 +1,4 @@
-import React, { useState, createElement, useEffect } from 'react'
+import React, { useState, createElement } from 'react'
 
 interface UiData {
     name: string
@@ -33,8 +33,10 @@ interface Props {
 export default ({ child }: Props) => {
     let c = child as ParsedComponent<any>
 
-    const { properties } = makeEasyUiData(c.uiData)
+    const { directives, properties } = makeEasyUiData(c.uiData)
     const [state, setState] = useState(makeInitialState(properties))
+
+    console.log(c.uiData)
 
     const inputs = Object.keys(properties).map((key, i) => {
         const { directives } = properties[key]
@@ -57,9 +59,12 @@ export default ({ child }: Props) => {
 
             case 'select':
                 let values: string[] = properties[key].value.split(' | ')
+                let labels: string[] = directives['options']
+                    ? directives['options'].split(' | ')
+                    : []
                 let options = values.map((value, i) => (
                     <option key={i} value={value}>
-                        {value}
+                        {labels[i] ? labels[i] : value}
                     </option>
                 ))
 
@@ -90,7 +95,7 @@ export default ({ child }: Props) => {
         }
 
         return (
-            <React.Fragment key={i}>
+            <div className={'input'} key={i}>
                 {directives['label'] ? (
                     <label>
                         {directives['label']}
@@ -99,14 +104,17 @@ export default ({ child }: Props) => {
                 ) : (
                     inputEl
                 )}
-            </React.Fragment>
+            </div>
         )
     })
 
     return (
         <>
-            {inputs}
-            {createElement(c, state)}
+            <label>
+                {directives['label']}
+                {inputs}
+                {createElement(c, state)}
+            </label>
         </>
     )
 }
@@ -146,10 +154,6 @@ const makeInitialState = (properties: EasyUiData['properties']) => {
         const { directives } = properties[key]
 
         switch (directives['type']) {
-            case 'checkbox':
-                prev[key] = directives['default'] === 'true' ? true : false
-                break
-
             default:
                 prev[key] = directives['default']
         }

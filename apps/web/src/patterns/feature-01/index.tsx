@@ -1,19 +1,18 @@
 import React from 'react'
 import './styles.less'
 
+//* label="Feature 01"
 interface Props {
     //* label="Media Source"
     //* default="https://websitedemos.net/wp-content/uploads/2020/01/hero9-bg.jpg"
     mediaSource: string
 
     //* label="Button Style" type="select"
-    //* default="inverted"
-    // TODO: Individual labels for the options
+    //* default="default" options="Default | Inverted"
     buttonStyle: 'default' | 'inverted'
 
     //* label="Flipped" type="checkbox"
-    // TODO: Is being parsed as a string, should maybe be parsed as a boolean
-    //* default="false"
+    //* default=true
     flipped: boolean
 }
 

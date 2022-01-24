@@ -30,7 +30,7 @@ fn do_properties(properties: &[InterfaceProperty]) -> String {
     properties.iter().for_each(|p| {
         let v = match &p.value {
             PropertyValue::String(s) => {
-                if s.contains("\"") {
+                if s.contains('"') {
                     format!("'{}'", s)
                 } else {
                     format!("\"{}\"", s)
@@ -68,6 +68,7 @@ fn do_directives(directives: &[Directive], tabsize: u8) -> String {
         let v = match &d.value {
             DirectiveValue::String(s) => format!("\"{}\"", s),
             DirectiveValue::Number(n) => n.to_string(),
+            DirectiveValue::Boolean(b) => b.to_string(),
         };
 
         str += &format!(
@@ -101,6 +102,7 @@ fn do_defaults(properties: &[InterfaceProperty]) -> String {
         {
             DirectiveValue::String(s) => format!("\"{}\"", s),
             DirectiveValue::Number(n) => n.to_string(),
+            DirectiveValue::Boolean(b) => b.to_string(),
         };
 
         str += &format!(

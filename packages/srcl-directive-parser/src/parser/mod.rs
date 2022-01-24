@@ -217,7 +217,7 @@ impl Parser<'_> {
                     Token::Identifier(_) => {
                         let key = self.identifier()?.inner();
                         self.equals()?;
-                        let value = self.string_or_number()?;
+                        let value = self.string_or_number_or_boolean()?;
 
                         directives.push(Directive::new(key, value.into()));
                     }
@@ -285,19 +285,20 @@ impl Parser<'_> {
         }
     }
 
-    fn string_or_number(&mut self) -> Result<Token, String> {
+    fn string_or_number_or_boolean(&mut self) -> Result<Token, String> {
         if let Some(token) = self.lexer.peek() {
             match token {
+                Token::Identifier(_) => self.boolean(),
                 Token::QuotationMark(_) => self.string(),
                 Token::Number(_) => self.number(),
                 _ => Err(format!(
-                    "Expected String or Number at {:?}",
+                    "Expected String or Number or Boolean at {:?}",
                     self.lexer.get_position()
                 )),
             }
         } else {
             Err(format!(
-                "String String or Number at {:?}",
+                "String String or Number or Boolean at {:?}",
                 self.lexer.get_position()
             ))
         }
@@ -348,6 +349,25 @@ impl Parser<'_> {
         } else {
             Err(format!(
                 "Expected Number at {:?}",
+                self.lexer.get_position()
+            ))
+        }
+    }
+
+    fn boolean(&mut self) -> Result<Token, String> {
+        if let Some(Token::Identifier(s)) = self.lexer.peek() {
+            if s == "true" || s == "false" {
+                self.lexer.next();
+                Ok(Token::Boolean(s))
+            } else {
+                Err(format!(
+                    "Expected Boolean at {:?}",
+                    self.lexer.get_position()
+                ))
+            }
+        } else {
+            Err(format!(
+                "Expected Boolean at {:?}",
                 self.lexer.get_position()
             ))
         }

@@ -4,6 +4,7 @@ use crate::lexer::types::Token;
 pub enum DirectiveValue {
     String(String),
     Number(String),
+    Boolean(String),
 }
 
 #[derive(Debug)]
@@ -102,6 +103,7 @@ impl From<Token> for DirectiveValue {
             Token::Identifier(s) => DirectiveValue::String(s),
             Token::String(s) => DirectiveValue::String(s),
             Token::Number(n) => DirectiveValue::Number(n),
+            Token::Boolean(b) => DirectiveValue::Boolean(b),
             t => panic!("Token {:?} cannot be converted into DirectiveValue", t),
         }
     }

@@ -6,6 +6,10 @@ interface Props {
     //* type="text"
     //* default="https://websitedemos.net/wp-content/uploads/2020/01/hero8-bg.jpg"
     string: 'sometthing' | 'else' | string
+
+    //* label="Flipped" type="checkbox"
+    //* default=true
+    flipped: boolean
 }
 
 const Component = (props: Props) => {}
