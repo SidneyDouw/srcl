@@ -60,6 +60,7 @@ impl Enum {
 pub enum PropertyValue {
     String(String),
     Number(String),
+    Expression(String),
     // Interface(Interface),
 }
 
@@ -122,11 +123,11 @@ impl From<Token> for PropertyValue {
 
 impl From<Vec<Token>> for PropertyValue {
     fn from(v: Vec<Token>) -> Self {
-        let out = v
+        let mut out = v
             .into_iter()
             .map(|t| match t {
                 Token::Identifier(s) => s,
-                Token::String(s) => s,
+                Token::String(s) => format!("\"{}\"", s).into(),
                 Token::Number(n) => n,
                 t => panic!(
                     "Token {:?} in Union vector cannot be converted into PropertyValue",
@@ -134,9 +135,11 @@ impl From<Vec<Token>> for PropertyValue {
                 ),
             })
             .collect::<Vec<_>>()
-            .join(" | ");
+            .join(", ");
 
-        PropertyValue::String(out)
+        out = format!("[{}]", out).into();
+
+        PropertyValue::Expression(out)
     }
 }
 

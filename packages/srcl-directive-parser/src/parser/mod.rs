@@ -155,31 +155,74 @@ impl Parser<'_> {
                     Token::Identifier(_) => {
                         let key = self.identifier()?.inner();
                         self.colon()?;
-                        let value = self.identifier_or_string()?;
 
-                        let mut union: Vec<Token> = vec![value.clone()];
+                        let mut value = self.identifier_or_string()?;
+                        let mut values: Vec<Token> = vec![value.clone()];
 
-                        while let Some(Token::Pipe) = self.lexer.peek() {
-                            self.pipe()?;
-                            let t = self.identifier_or_string()?;
-                            union.push(t);
+                        if let Token::Identifier(s) = &value {
+                            if let Some(Token::SquareBracket(Scope::Begin)) = self.lexer.peek() {
+                                self.square_bracket(Scope::Begin)?;
+                                self.square_bracket(Scope::End)?;
+
+                                value = Token::Identifier(format!("{}[]", s));
+                            }
+                        }
+
+                        match self.lexer.peek() {
+                            Some(Token::Dot) => {
+                                while let Some(Token::Dot) = self.lexer.peek() {
+                                    self.dot()?;
+                                    let t = self.identifier()?;
+                                    values.push(t);
+                                }
+
+                                let last_index = values.len() - 1;
+                                if let Token::Identifier(s) = &values[last_index] {
+                                    if let Some(Token::SquareBracket(Scope::Begin)) =
+                                        self.lexer.peek()
+                                    {
+                                        self.square_bracket(Scope::Begin)?;
+                                        self.square_bracket(Scope::End)?;
+
+                                        values[last_index] = Token::Identifier(format!("{}[]", s));
+                                    }
+                                }
+
+                                value = Token::Identifier(
+                                    values
+                                        .into_iter()
+                                        .map(|x| x.inner())
+                                        .collect::<Vec<String>>()
+                                        .join("."),
+                                );
+                                values = vec![];
+                            }
+                            Some(Token::Pipe) => {
+                                while let Some(Token::Pipe) = self.lexer.peek() {
+                                    self.pipe()?;
+                                    let t = self.identifier_or_string()?;
+                                    values.push(t);
+                                }
+                            }
+                            _ => {}
                         }
 
                         match last_token {
                             TokenFlag::Directive => {
                                 let last_entry = properties.last_mut().unwrap();
                                 last_entry.key = key;
-                                if union.len() > 1 {
-                                    last_entry.value = union.into();
+                                if values.len() > 1 {
+                                    last_entry.value = values.into();
                                 } else {
                                     last_entry.value = value.into();
                                 }
                             }
                             TokenFlag::Property => {
-                                properties.push(InterfaceProperty::new(
-                                    "".into(),
-                                    Token::Identifier("".into()).into(),
-                                ));
+                                if values.len() > 1 {
+                                    properties.push(InterfaceProperty::new(key, values.into()));
+                                } else {
+                                    properties.push(InterfaceProperty::new(key, value.into()));
+                                }
                             }
                         }
 
@@ -387,6 +430,26 @@ impl Parser<'_> {
         }
     }
 
+    fn square_bracket(&mut self, scope: Scope) -> Result<(), String> {
+        if let Some(Token::SquareBracket(s)) = self.lexer.peek() {
+            if s == scope {
+                self.lexer.next();
+                Ok(())
+            } else {
+                Err(format!(
+                    "Expected {:?} at {:?}",
+                    scope,
+                    self.lexer.get_position()
+                ))
+            }
+        } else {
+            Err(format!(
+                "Expected Square Bracket at {:?}",
+                self.lexer.get_position()
+            ))
+        }
+    }
+
     fn brace(&mut self, scope: Scope) -> Result<(), String> {
         if let Some(Token::Brace(s)) = self.lexer.peek() {
             if s == scope {
@@ -426,6 +489,15 @@ impl Parser<'_> {
                 "Expected Quotation Mark at {:?}",
                 self.lexer.get_position()
             ))
+        }
+    }
+
+    fn dot(&mut self) -> Result<(), String> {
+        if let Some(Token::Dot) = self.lexer.peek() {
+            self.lexer.next();
+            Ok(())
+        } else {
+            Err(format!("Expected Dot at {:?}", self.lexer.get_position()))
         }
     }
 

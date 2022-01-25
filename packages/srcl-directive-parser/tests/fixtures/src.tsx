@@ -10,6 +10,8 @@ interface Props {
     //* label="Flipped" type="checkbox"
     //* default=true
     flipped: boolean
+
+    children: JSX.Element[]
 }
 
 const Component = (props: Props) => {}

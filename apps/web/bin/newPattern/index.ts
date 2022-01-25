@@ -27,7 +27,7 @@ fs.mkdirSync(pathToPatternDir)
 
         fs.writeFile(
             `${pathToPatternDir}/${targetname}`,
-            data.replace('{{PATTERN_NAME}}', patternName),
+            data.replace(/\{\{PATTERN_NAME\}\}/g, patternName),
             (err) => {
                 if (err) {
                     console.error(err)

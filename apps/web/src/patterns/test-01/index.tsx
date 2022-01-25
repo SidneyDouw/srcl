@@ -1,7 +1,7 @@
 import React from 'react'
 import './styles.less'
 
-//* label="Feature 01"
+//* label="Test 01"
 interface Props {
     //* label="Media Source"
     //* default="https://websitedemos.net/wp-content/uploads/2020/01/hero9-bg.jpg"
@@ -18,7 +18,7 @@ interface Props {
 
 const Component = (props: Props) => {
     return (
-        <section className="feature-01">
+        <section className="test-01">
             <div className={props.flipped ? 'flipped' : ''}>
                 <img className="media" src={props.mediaSource} />
                 <div>

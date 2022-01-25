@@ -32,4 +32,6 @@ fn can_transformer_transform() {
         "export default Component",
         format!("{}\n\nexport default Component", s).as_str(),
     );
+
+    println!("{}", _output);
 }

@@ -45,6 +45,7 @@ impl Iterator for Lexer<'_> {
                     '\n' => self.newline(),
                     '\\' => self.consume(Token::Backslash),
                     '-' => self.consume(Token::Dash),
+                    '_' => self.consume(Token::Underscore),
                     '{' => self.consume(Token::Brace(Scope::Begin)),
                     '}' => self.consume(Token::Brace(Scope::End)),
                     '[' => self.consume(Token::SquareBracket(Scope::Begin)),

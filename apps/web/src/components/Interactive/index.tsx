@@ -36,77 +36,90 @@ export default ({ child }: Props) => {
     const { directives, properties } = makeEasyUiData(c.uiData)
     const [state, setState] = useState(makeInitialState(properties))
 
-    console.log(c.uiData)
+    const inputs = Object.keys(properties)
+        .filter((key, i) => Object.keys(properties[key].directives).length > 0)
+        .map((key, i) => {
+            const { directives } = properties[key]
 
-    const inputs = Object.keys(properties).map((key, i) => {
-        const { directives } = properties[key]
+            let inputEl: JSX.Element
 
-        let inputEl: JSX.Element
+            switch (directives['type']) {
+                case 'checkbox':
+                    inputEl = (
+                        <input
+                            type="checkbox"
+                            checked={state[key]}
+                            onChange={(e) => {
+                                setState({ ...state, [key]: e.target.checked })
+                            }}
+                        />
+                    )
 
-        switch (directives['type']) {
-            case 'checkbox':
-                inputEl = (
-                    <input
-                        type="checkbox"
-                        checked={state[key]}
-                        onChange={(e) => {
-                            setState({ ...state, [key]: e.target.checked })
-                        }}
-                    />
-                )
+                    break
 
-                break
+                case 'select':
+                    let values: string[] = properties[key].value.split(' | ')
+                    let labels: string[] = directives['options']
+                        ? directives['options'].split(' | ')
+                        : []
+                    let options = values.map((value, i) => (
+                        <option key={i} value={value}>
+                            {labels[i] ? labels[i] : value}
+                        </option>
+                    ))
 
-            case 'select':
-                let values: string[] = properties[key].value.split(' | ')
-                let labels: string[] = directives['options']
-                    ? directives['options'].split(' | ')
-                    : []
-                let options = values.map((value, i) => (
-                    <option key={i} value={value}>
-                        {labels[i] ? labels[i] : value}
-                    </option>
-                ))
+                    inputEl = (
+                        <select
+                            value={state[key]}
+                            onChange={(e) =>
+                                setState({ ...state, [key]: values[e.target.selectedIndex] })
+                            }
+                        >
+                            {options}
+                        </select>
+                    )
 
-                inputEl = (
-                    <select
-                        value={state[key]}
-                        onChange={(e) =>
-                            setState({ ...state, [key]: values[e.target.selectedIndex] })
-                        }
-                    >
-                        {options}
-                    </select>
-                )
+                    break
 
-                break
+                case 'range':
+                    inputEl = (
+                        <input
+                            type={directives['type']}
+                            min={directives['min']}
+                            max={directives['max']}
+                            step={directives['step']}
+                            value={state[key]}
+                            onChange={(e) =>
+                                setState({ ...state, [key]: parseFloat(e.target.value) })
+                            }
+                        />
+                    )
 
-            default:
-                inputEl = (
-                    <input
-                        type={directives['type']}
-                        min={directives['min']}
-                        max={directives['max']}
-                        step={directives['step']}
-                        value={state[key]}
-                        onChange={(e) => setState({ ...state, [key]: e.target.value })}
-                    />
-                )
-        }
+                    break
 
-        return (
-            <div className={'input'} key={i}>
-                {directives['label'] ? (
-                    <label>
-                        {directives['label']}
-                        {inputEl}
-                    </label>
-                ) : (
-                    inputEl
-                )}
-            </div>
-        )
-    })
+                default:
+                    inputEl = (
+                        <input
+                            type={directives['type']}
+                            value={state[key]}
+                            onChange={(e) => setState({ ...state, [key]: e.target.value })}
+                        />
+                    )
+            }
+
+            return (
+                <div className={'input'} key={i}>
+                    {directives['label'] ? (
+                        <label>
+                            {directives['label']}
+                            {inputEl}
+                        </label>
+                    ) : (
+                        inputEl
+                    )}
+                </div>
+            )
+        })
 
     return (
         <>

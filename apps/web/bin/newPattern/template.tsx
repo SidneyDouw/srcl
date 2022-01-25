@@ -1,5 +1,6 @@
 import React from 'react'
 
+//* label="{{PATTERN_NAME}}"
 interface Props {}
 
 const Component = (props: Props) => {

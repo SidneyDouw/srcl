@@ -24,6 +24,7 @@ pub enum Token {
     Backslash,
     Equals,
     Dash,
+    Underscore,
     FatArrow,
     Pipe,
     QuestionMark,
