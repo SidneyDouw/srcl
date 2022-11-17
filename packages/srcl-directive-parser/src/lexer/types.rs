@@ -28,6 +28,7 @@ pub enum Token {
     FatArrow,
     Pipe,
     QuestionMark,
+    Ampersand,
     DirectiveStart,
     DirectiveEnd,
     Whitespace,
@@ -37,13 +38,13 @@ pub enum Token {
 impl Token {
     pub fn inner(self) -> String {
         match self {
-            Token::Identifier(s) => s,
-            Token::Number(n) => n,
-            Token::String(s) => s,
-            Token::Boolean(b) => b,
-            Token::Comment(c) => c,
-            Token::QuotationMark(q) => q.into(),
-            _ => panic!("Token::inner() called on non-inner token"),
+            Token::Identifier(x) => x,
+            Token::Number(x) => x,
+            Token::String(x) => x,
+            Token::Boolean(x) => x,
+            Token::Comment(x) => x,
+            Token::QuotationMark(x) => x.into(),
+            t => panic!("No inner data for token type {:?}", t),
         }
     }
 }

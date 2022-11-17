@@ -60,6 +60,7 @@ impl Iterator for Lexer<'_> {
                     ':' => self.consume(Token::Colon),
                     ';' => self.consume(Token::Semicolon),
                     '?' => self.consume(Token::QuestionMark),
+                    '&' => self.consume(Token::Ampersand),
                     _ => panic!("Invalid Character found: \"{}\"", c),
                 },
             };

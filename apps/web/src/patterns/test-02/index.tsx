@@ -17,8 +17,15 @@ const Component = (props: Props) => {
                 {Array(props.columns)
                     .fill(0)
                     .map((_, i) => {
-                        // return props.children[i]
-                        return <p key={i}> Column {i} </p>
+                        return (
+                            <React.Fragment key={i}>
+                                {props.children && props.children[i] ? (
+                                    props.children[i]
+                                ) : (
+                                    <div> empty </div>
+                                )}
+                            </React.Fragment>
+                        )
                     })}
             </div>
         </section>

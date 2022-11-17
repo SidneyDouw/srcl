@@ -4,6 +4,8 @@ pub mod lexer;
 pub mod parser;
 pub mod transformer;
 
+pub mod v2;
+
 use parser::Parser;
 use transformer::to_js_obj;
 use wasm_bindgen::prelude::*;

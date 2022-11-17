@@ -28,10 +28,11 @@ interface ParsedComponent<P> extends React.FunctionComponent<P> {
 
 interface Props {
     child: React.FunctionComponent<any>
+    children?: JSX.Element[]
 }
 
-export default ({ child }: Props) => {
-    let c = child as ParsedComponent<any>
+export default (props: Props) => {
+    let c = props.child as ParsedComponent<any>
 
     const { directives, properties } = makeEasyUiData(c.uiData)
     const [state, setState] = useState(makeInitialState(properties))
@@ -126,7 +127,7 @@ export default ({ child }: Props) => {
             <label>
                 {directives['label']}
                 {inputs}
-                {createElement(c, state)}
+                {createElement(c, state, props.children)}
             </label>
         </>
     )

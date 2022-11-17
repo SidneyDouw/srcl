@@ -82,7 +82,7 @@ fn do_directives(directives: &[Directive], tabsize: u8) -> String {
     });
 
     if str.ends_with('[') {
-        str += "],";
+        str += "]";
     } else {
         str += &format!("\n{}],", tab(tabsize - 4));
     }

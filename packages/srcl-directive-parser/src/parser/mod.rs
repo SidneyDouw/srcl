@@ -159,33 +159,13 @@ impl Parser<'_> {
                         let mut value = self.identifier_or_string()?;
                         let mut values: Vec<Token> = vec![value.clone()];
 
-                        if let Token::Identifier(s) = &value {
-                            if let Some(Token::SquareBracket(Scope::Begin)) = self.lexer.peek() {
-                                self.square_bracket(Scope::Begin)?;
-                                self.square_bracket(Scope::End)?;
-
-                                value = Token::Identifier(format!("{}[]", s));
-                            }
-                        }
-
+                        // Handle Pipe and Dot chains (union types and nested object types)
                         match self.lexer.peek() {
                             Some(Token::Dot) => {
                                 while let Some(Token::Dot) = self.lexer.peek() {
                                     self.dot()?;
                                     let t = self.identifier()?;
                                     values.push(t);
-                                }
-
-                                let last_index = values.len() - 1;
-                                if let Token::Identifier(s) = &values[last_index] {
-                                    if let Some(Token::SquareBracket(Scope::Begin)) =
-                                        self.lexer.peek()
-                                    {
-                                        self.square_bracket(Scope::Begin)?;
-                                        self.square_bracket(Scope::End)?;
-
-                                        values[last_index] = Token::Identifier(format!("{}[]", s));
-                                    }
                                 }
 
                                 value = Token::Identifier(
@@ -374,8 +354,35 @@ impl Parser<'_> {
     }
 
     fn identifier(&mut self) -> Result<Token, String> {
-        if let Some(Token::Identifier(s)) = self.lexer.peek() {
+        if let Some(Token::Identifier(mut s)) = self.lexer.peek() {
             self.lexer.next();
+
+            // Handle any kind of brackes after an identifier
+            match self.lexer.peek() {
+                Some(Token::SquareBracket(Scope::Begin)) => {
+                    self.square_bracket(Scope::Begin)?;
+                    self.square_bracket(Scope::End)?;
+
+                    s = format!("{}[]", s);
+                }
+
+                Some(Token::AngleBracket(Scope::Begin)) => {
+                    let mut inner = vec![];
+
+                    self.angle_bracket(Scope::Begin)?;
+                    inner.push(self.identifier()?.inner());
+
+                    while let Some(Token::Identifier(_)) = self.lexer.peek() {
+                        inner.push(self.identifier()?.inner());
+                    }
+
+                    self.angle_bracket(Scope::End)?;
+
+                    s = format!("{}<{}>", s, inner.join(", "));
+                }
+                _ => {}
+            }
+
             Ok(Token::Identifier(s))
         } else {
             Err(format!(
@@ -450,6 +457,26 @@ impl Parser<'_> {
         }
     }
 
+    fn angle_bracket(&mut self, scope: Scope) -> Result<(), String> {
+        if let Some(Token::AngleBracket(s)) = self.lexer.peek() {
+            if s == scope {
+                self.lexer.next();
+                Ok(())
+            } else {
+                Err(format!(
+                    "Expected {:?} at {:?}",
+                    scope,
+                    self.lexer.get_position()
+                ))
+            }
+        } else {
+            Err(format!(
+                "Expected Angle Bracket at {:?}",
+                self.lexer.get_position()
+            ))
+        }
+    }
+
     fn brace(&mut self, scope: Scope) -> Result<(), String> {
         if let Some(Token::Brace(s)) = self.lexer.peek() {
             if s == scope {
@@ -498,6 +525,15 @@ impl Parser<'_> {
             Ok(())
         } else {
             Err(format!("Expected Dot at {:?}", self.lexer.get_position()))
+        }
+    }
+
+    fn comma(&mut self) -> Result<(), String> {
+        if let Some(Token::Comma) = self.lexer.peek() {
+            self.lexer.next();
+            Ok(())
+        } else {
+            Err(format!("Expected Comma at {:?}", self.lexer.get_position()))
         }
     }
 

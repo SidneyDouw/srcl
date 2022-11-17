@@ -1,17 +1,39 @@
 interface Props {
-    //* type="range" min=0 max=99 step=1 default=0
-    //* label="Number"
-    num: number
+    //* label="test"
 
-    //* type="text"
-    //* default="https://websitedemos.net/wp-content/uploads/2020/01/hero8-bg.jpg"
-    string: 'sometthing' | 'else' | string
+    // Basics
+    string: string
+    number: number
+    boolean: boolean
+    any: any
+    literal: 'he"y' // Escaped quotation marks do not work
 
-    //* label="Flipped" type="checkbox"
-    //* default=true
-    flipped: boolean
+    // Optionals
+    // stringOption?: string
 
-    children: JSX.Element[]
+    // Unions
+    // TODO: they look like tuples atm, should change this
+    unionPure: string | number | boolean
+    unionMix: string | 'number' | boolean[]
+
+    // Generics
+    array: Array<number>
+    map: Map<string, number>
+
+    // Arrays
+    stringArr: string[]
+    numberArr: number[]
+    booleanArr: boolean[]
+    anyArr: any[]
+
+    // Tuples
+
+    // Objects
+    // object: { a: string }
+    // nestedObject: { a: string, b: { c: number } }
+
+    // Interfaces
+    // customType: CustomType
 }
 
 const Component = (props: Props) => {}
